@@ -9,8 +9,8 @@ public class SaveImageToDesktop : MonoBehaviour
 
     void Start()
     {
-        Texture2D uncompressed = CopyTexture(textureToSave);
-        SaveAsJPG(uncompressed, "MySavedImage.jpg");
+        // Texture2D uncompressed = CopyTexture(textureToSave);
+        // SaveAsJPG(uncompressed, "MySavedImage.jpg");
     }
 
     Texture2D CopyTexture(Texture2D source)
