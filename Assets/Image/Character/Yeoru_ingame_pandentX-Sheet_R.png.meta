@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 773331c86976848489c6926499d67add
+guid: 916ca6ae566bb7c4f8bc36e63dc23723
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -95,7 +95,91 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: Yeoru_ingame_pandentX-Sheet_R_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7acf78768aec7ec499a964fd395fc98c
+      internalID: -1474335547
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Yeoru_ingame_pandentX-Sheet_R_1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 42788cce329ad5a4995c60de73e587a2
+      internalID: 1944207197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Yeoru_ingame_pandentX-Sheet_R_2
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b401666016a57a9468bc951d75f0dd27
+      internalID: -1532452921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Yeoru_ingame_pandentX-Sheet_R_3
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 0
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f88caf4b83322ee459da760014eb500a
+      internalID: -661589021
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -106,7 +190,11 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Yeoru_ingame_pandentX-Sheet_R_0: -1474335547
+      Yeoru_ingame_pandentX-Sheet_R_1: 1944207197
+      Yeoru_ingame_pandentX-Sheet_R_2: -1532452921
+      Yeoru_ingame_pandentX-Sheet_R_3: -661589021
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

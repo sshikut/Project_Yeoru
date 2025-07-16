@@ -67,6 +67,9 @@ public class CharacterMove : MonoBehaviour
             {
 
                 transform.Translate(vector.x * (speed + applyRunSpeed) * 0.01f, vector.y * (speed + applyRunSpeed) * 0.01f, 0);
+
+                SnapToPixelGrid();
+
                 if (applyRunFlag)
                     currentWalkCount++;
                 currentWalkCount++;
@@ -95,5 +98,14 @@ public class CharacterMove : MonoBehaviour
             }
         }
 
+    }
+
+    void SnapToPixelGrid()
+    {
+        float ppu = 32f;
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Round(pos.x * ppu) / ppu;
+        pos.y = Mathf.Round(pos.y * ppu) / ppu;
+        transform.position = pos;
     }
 }
