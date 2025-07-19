@@ -11,44 +11,42 @@ public class PlayerInteraction : MonoBehaviour
 
     private Vector2 lookDirection = Vector2.down; // 기본 방향
 
-    void Start()
-    {
-        inventory = GetComponentInChildren<Inventory>();
-    }
-
     void Update()
     {
-        // 방향키 입력 감지
-        Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        if (input != Vector2.zero)
-            lookDirection = input.normalized;
-
-        // 상호작용 키 입력
-        if (Input.GetKeyDown(interactKey))
+        if (!GameManager.Instance.isPause)
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, lookDirection, interactDistance, interactLayer);
+            // 방향키 입력 감지
+            Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            if (input != Vector2.zero)
+                lookDirection = input.normalized;
 
-            if (hit.collider != null && hit.collider.CompareTag("NPC"))
+            // 상호작용 키 입력
+            if (Input.GetKeyDown(interactKey))
             {
-                hit.collider.GetComponent<NPC>().StartDialogue();
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, lookDirection, interactDistance, interactLayer);
+
+                if (hit.collider != null && hit.collider.CompareTag("NPC"))
+                {
+                    GameManager.Instance.OpenUI(GameUIState.Dialogue);
+                    hit.collider.GetComponent<NPC>().StartDialogue();
+                }
+
+                if (hit.collider != null && hit.collider.CompareTag("Item"))
+                {
+                    if (inventory.CheckInventory())
+                    {
+                        inventory.AddItem(hit.collider.GetComponent<ItemPickUp>().item);
+                        Destroy(hit.collider.gameObject);
+                    }
+                    else
+                    {
+                        Debug.Log("Inventory Full");
+                    }
+                }
             }
 
-            if (hit.collider.CompareTag("Item"))
-            {
-                Debug.Log("체크1");
-                if (inventory.CheckInventory())
-                {
-                    Debug.Log("체크2");
-                    inventory.AddItem(hit.collider.GetComponent<ItemPickUp>().item);
-                }
-                else
-                {
-                    Debug.Log("Inventory Full");
-                }
-            }
+            // (선택) 디버그용 레이 시각화
+            Debug.DrawRay(transform.position, lookDirection * interactDistance, Color.yellow);
         }
-
-        // (선택) 디버그용 레이 시각화
-        Debug.DrawRay(transform.position, lookDirection * interactDistance, Color.yellow);
     }
 }

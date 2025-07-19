@@ -81,5 +81,6 @@ public class DialogueManager : MonoBehaviour
         dialogueText.text = "";
         dialogueActive = false;
         CharacterMove.instance.canMove = true;
+        GameManager.Instance.CloseUI();
     }
 }

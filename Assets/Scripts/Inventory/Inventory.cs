@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
@@ -19,6 +20,9 @@ public class Inventory : MonoBehaviour
             {
                 slot.item = item;
                 slot.count++;
+                slot.itemImage.sprite = item.icon;
+                slot.itemName.text = item.itemName;
+
                 return true;
             }
         }
@@ -38,4 +42,5 @@ public class Inventory : MonoBehaviour
 
         return false;
     }
+
 }
