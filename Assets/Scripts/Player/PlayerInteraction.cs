@@ -7,8 +7,14 @@ public class PlayerInteraction : MonoBehaviour
     public float interactDistance = 1f;
     public LayerMask interactLayer;
     public KeyCode interactKey = KeyCode.E;
+    public Inventory inventory;
 
     private Vector2 lookDirection = Vector2.down; // 기본 방향
+
+    void Start()
+    {
+        inventory = GetComponentInChildren<Inventory>();
+    }
 
     void Update()
     {
@@ -24,8 +30,21 @@ public class PlayerInteraction : MonoBehaviour
 
             if (hit.collider != null && hit.collider.CompareTag("NPC"))
             {
-                // IInteractable 인터페이스로도 처리 가능
                 hit.collider.GetComponent<NPC>().StartDialogue();
+            }
+
+            if (hit.collider.CompareTag("Item"))
+            {
+                Debug.Log("체크1");
+                if (inventory.CheckInventory())
+                {
+                    Debug.Log("체크2");
+                    inventory.AddItem(hit.collider.GetComponent<ItemPickUp>().item);
+                }
+                else
+                {
+                    Debug.Log("Inventory Full");
+                }
             }
         }
 
