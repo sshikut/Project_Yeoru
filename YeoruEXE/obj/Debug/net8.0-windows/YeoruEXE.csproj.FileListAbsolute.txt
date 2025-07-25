@@ -1,0 +1,17 @@
+D:\Project_Yeoru\YeoruEXE\bin\Debug\net8.0-windows\YeoruEXE.exe
+D:\Project_Yeoru\YeoruEXE\bin\Debug\net8.0-windows\YeoruEXE.deps.json
+D:\Project_Yeoru\YeoruEXE\bin\Debug\net8.0-windows\YeoruEXE.runtimeconfig.json
+D:\Project_Yeoru\YeoruEXE\bin\Debug\net8.0-windows\YeoruEXE.dll
+D:\Project_Yeoru\YeoruEXE\bin\Debug\net8.0-windows\YeoruEXE.pdb
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.OverlayForm.resources
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.csproj.GenerateResource.cache
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.GeneratedMSBuildEditorConfig.editorconfig
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.AssemblyInfoInputs.cache
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.AssemblyInfo.cs
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.csproj.CoreCompileInputs.cache
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.sourcelink.json
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.dll
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\refint\YeoruEXE.dll
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.pdb
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\YeoruEXE.genruntimeconfig.cache
+D:\Project_Yeoru\YeoruEXE\obj\Debug\net8.0-windows\ref\YeoruEXE.dll

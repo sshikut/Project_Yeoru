@@ -1,0 +1,74 @@
+﻿using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
+using System.IO;
+
+namespace YeoruEXE
+{
+    public partial class OverlayForm : Form
+    {
+        private Timer positionCheckTimer;
+
+        public OverlayForm()
+        {
+            InitializeComponent();
+            // this.FormBorderStyle = FormBorderStyle.None;
+            this.TopMost = true;
+            this.StartPosition = FormStartPosition.Manual;
+            this.Location = new Point(300, 300);
+            this.Size = new Size(800, 600);
+            this.BackColor = Color.Magenta;
+            this.TransparencyKey = Color.Magenta;
+            this.Opacity = 0.6;
+
+            positionCheckTimer = new Timer();
+            positionCheckTimer.Interval = 100; // 100ms 마다 체크
+            positionCheckTimer.Tick += CheckPosition;
+            positionCheckTimer.Start();
+        }
+
+        [DllImport("user32.dll")]
+        static extern IntPtr FindWindow(string? lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll")]
+        static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+        }
+
+        private void CheckPosition(object? sender, EventArgs e)
+        {
+            IntPtr hwnd = FindWindow(null, "Project_Yeoru - TestScene - Windows, Mac, Linux - Unity 2022.3.59f1 <DX11>"); // 에디터면 "Unity Editor"
+            if (hwnd == IntPtr.Zero)
+                return;
+
+            if (GetWindowRect(hwnd, out RECT rect))
+            {
+                Rectangle unityWindow = new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+                Rectangle overlayRect = new Rectangle(this.Location, this.Size);
+
+                if (unityWindow.IntersectsWith(overlayRect))
+                {
+                    File.WriteAllText("event_signal.txt", "trigger");
+                }
+                else
+                {
+                    File.WriteAllText("event_signal.txt", "none");
+                }
+            }
+        }
+
+        private void OverlayForm_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
