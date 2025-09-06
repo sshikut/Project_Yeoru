@@ -22,6 +22,7 @@ namespace YeoruEXE
             this.BackColor = Color.Magenta;
             this.TransparencyKey = Color.Magenta;
             this.Opacity = 0.6;
+            this.FormClosing += new FormClosingEventHandler(OverlayForm_FormClosing);
 
             positionCheckTimer = new Timer();
             positionCheckTimer.Interval = 100; // 100ms 마다 체크
@@ -69,6 +70,12 @@ namespace YeoruEXE
         private void OverlayForm_Load(object sender, EventArgs e)
         {
 
+        }
+
+        // 프로그램 끌 때 none 설정함
+        private void OverlayForm_FormClosing(object? sender, FormClosingEventArgs e)
+        {
+            File.WriteAllText("event_signal.txt", "none");
         }
     }
 }

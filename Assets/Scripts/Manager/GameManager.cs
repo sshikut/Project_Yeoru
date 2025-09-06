@@ -38,15 +38,15 @@ public class GameManager : MonoBehaviour
     {
         isPause = true;
         pauseCounter++;
-        Time.timeScale = 0f;
+        // Time.timeScale = 0f;
     }
 
     public void ResumeGame()
     {
         isPause = false;
         pauseCounter = Mathf.Max(0, pauseCounter - 1);
-        if (pauseCounter == 0)
-            Time.timeScale = 1f;
+        // if (pauseCounter == 0)
+            // Time.timeScale = 1f;
     }
 
     public bool IsGamePaused()

@@ -13,7 +13,7 @@ public class PlayerInteraction : MonoBehaviour
 
     void Update()
     {
-        if (!GameManager.Instance.isPause)
+        if (!GameManager.Instance.IsUIOpen())
         {
             // 방향키 입력 감지
             Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
@@ -25,24 +25,28 @@ public class PlayerInteraction : MonoBehaviour
             {
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, lookDirection, interactDistance, interactLayer);
 
-                if (hit.collider != null && hit.collider.CompareTag("NPC"))
+                if (hit.collider != null)
                 {
-                    GameManager.Instance.OpenUI(GameUIState.Dialogue);
-                    hit.collider.GetComponent<NPC>().StartDialogue();
-                }
+                    if (hit.collider.CompareTag("NPC"))
+                    {
+                        GameManager.Instance.OpenUI(GameUIState.Dialogue);
+                        hit.collider.GetComponent<NPC>().StartDialogue();
+                    }
 
-                if (hit.collider != null && hit.collider.CompareTag("Item"))
-                {
-                    if (inventory.CheckInventory())
+                    if (hit.collider.CompareTag("Item"))
                     {
-                        inventory.AddItem(hit.collider.GetComponent<ItemPickUp>().item);
-                        Destroy(hit.collider.gameObject);
-                    }
-                    else
-                    {
-                        Debug.Log("Inventory Full");
+                        if (inventory.CheckInventory())
+                        {
+                            inventory.AddItem(hit.collider.GetComponent<ItemPickUp>().item);
+                            Destroy(hit.collider.gameObject);
+                        }
+                        else
+                        {
+                            Debug.Log("Inventory Full");
+                        }
                     }
                 }
+                
             }
 
             // (선택) 디버그용 레이 시각화

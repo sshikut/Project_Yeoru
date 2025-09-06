@@ -15,7 +15,7 @@ public class CharacterMove : MonoBehaviour
 
     private BoxCollider2D boxCollider;
     private LayerMask layerMask;
-    [SerializeField] private Animator animator;
+    public Animator animator;
 
     public float runSpeed;
     private float applyRunSpeed;
@@ -40,7 +40,6 @@ public class CharacterMove : MonoBehaviour
     {
         while (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
         {
-
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 applyRunSpeed = runSpeed;
@@ -65,17 +64,23 @@ public class CharacterMove : MonoBehaviour
 
             while (currentWalkCount < walkCount)
             {
-
-                transform.Translate(vector.x * (speed + applyRunSpeed) * 0.01f, vector.y * (speed + applyRunSpeed) * 0.01f, 0);
+                // UI가 열렸어도 한 칸은 마저 진행
+                transform.Translate(vector.x * (speed + applyRunSpeed) * 0.01f,
+                                    vector.y * (speed + applyRunSpeed) * 0.01f, 0);
 
                 SnapToPixelGrid();
 
                 if (applyRunFlag)
                     currentWalkCount++;
                 currentWalkCount++;
+
                 yield return new WaitForSeconds(0.01f);
             }
+
             currentWalkCount = 0;
+
+            if (GameManager.Instance.IsUIOpen())
+                break;
 
         }
         animator.SetBool("Walking", false);
@@ -88,6 +93,9 @@ public class CharacterMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // if (!canMove) return;
+
+        if (GameManager.Instance.IsUIOpen()) return;
 
         if (canMove)
         {
@@ -97,10 +105,9 @@ public class CharacterMove : MonoBehaviour
                 StartCoroutine(MoveCoroutine());
             }
         }
-
     }
 
-    void SnapToPixelGrid()
+    public void SnapToPixelGrid()
     {
         float ppu = 32f;
         Vector3 pos = transform.position;

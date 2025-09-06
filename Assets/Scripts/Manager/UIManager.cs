@@ -22,13 +22,11 @@ public class UIManager : MonoBehaviour
             if (!isActive)
             {
                 GameManager.Instance.PauseGame();
-                CharacterMove.instance.canMove = false;
                 GameManager.Instance.OpenUI(GameUIState.Inventory);
             }
             else
             {
                 GameManager.Instance.ResumeGame();
-                CharacterMove.instance.canMove = true;
                 GameManager.Instance.CloseUI();
             }
                 
