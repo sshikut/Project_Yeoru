@@ -45,6 +45,11 @@ public class PlayerInteraction : MonoBehaviour
                             Debug.Log("Inventory Full");
                         }
                     }
+
+                    if (hit.collider.CompareTag("Pipe"))
+                    {
+
+                    }
                 }
                 
             }

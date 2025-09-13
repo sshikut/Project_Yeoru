@@ -4,16 +4,22 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Timer = System.Windows.Forms.Timer;
 using System.IO;
+using System.IO.Pipes;
+using System.Threading.Tasks;
 
 namespace YeoruEXE
 {
     public partial class OverlayForm : Form
     {
+        private NamedPipeServerStream pipeServer = null!;
         private Timer positionCheckTimer;
 
         public OverlayForm()
         {
             InitializeComponent();
+
+            Task.Run(() => StartPipeServer());
+
             // this.FormBorderStyle = FormBorderStyle.None;
             this.TopMost = true;
             this.StartPosition = FormStartPosition.Manual;
@@ -26,8 +32,37 @@ namespace YeoruEXE
 
             positionCheckTimer = new Timer();
             positionCheckTimer.Interval = 100; // 100ms 마다 체크
-            positionCheckTimer.Tick += CheckPosition;
+            // positionCheckTimer.Tick += CheckPosition;
             positionCheckTimer.Start();
+        }
+
+        private void StartPipeServer()
+        {
+            using (pipeServer = new NamedPipeServerStream("UnityPipe", PipeDirection.InOut))
+            {
+                pipeServer.WaitForConnection();
+
+                using (StreamReader sr = new StreamReader(pipeServer))
+                {
+                    while (pipeServer.IsConnected)
+                    {
+                        try
+                        {
+                            string message = sr.ReadLine();
+                            if (message == null) break;
+
+                            this.Invoke((MethodInvoker)delegate {
+                                // 메시지 처리 로직 (예: MessageBox.Show, Label.Text 변경 등)
+                                MessageBox.Show($"Unity에서 받은 메시지: {message}");
+                            });
+                        }
+                        catch (IOException)
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         [DllImport("user32.dll")]
