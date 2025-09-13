@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class Inventory : MonoBehaviour
 {
@@ -30,7 +31,25 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
-    public bool CheckInventory()
+    public void UseItem(string itemName)
+    {
+        foreach (var slot in inventorySlots)
+        {
+            if (!slot.IsEmpty && slot.itemName.text.Equals(itemName))
+            {
+                slot.item = null;
+                slot.count--;
+                slot.itemImage.sprite = null;
+                slot.itemName.text = null;
+
+                // 아이템 효과
+
+                Debug.Log($"아이템 사용 : {itemName}");
+            }
+        }
+    }
+
+    public bool CheckInventory() // 인벤토리에 빈 칸이 있는지 확인하는 메소드
     {
         foreach (var slot in inventorySlots)
         {
@@ -43,4 +62,16 @@ public class Inventory : MonoBehaviour
         return false;
     }
 
+    public bool CheckItem(string itemName) // 해당 아이템이 있는지 확인하는 메소드
+    {
+        foreach (var slot in inventorySlots)
+        {
+            if (slot.itemName.text.Equals(itemName))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

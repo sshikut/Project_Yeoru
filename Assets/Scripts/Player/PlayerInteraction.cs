@@ -48,7 +48,14 @@ public class PlayerInteraction : MonoBehaviour
 
                     if (hit.collider.CompareTag("Pipe"))
                     {
-
+                        if (inventory.CheckItem(hit.collider.GetComponent<PipeInteraction>().value))
+                        {
+                            inventory.UseItem(hit.collider.GetComponent<PipeInteraction>().value);
+                        }
+                        else
+                        {
+                            Debug.Log("이거에 맞는 아이템이 읍 다");
+                        }
                     }
                 }
                 

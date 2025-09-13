@@ -18,7 +18,7 @@ namespace YeoruEXE
         {
             InitializeComponent();
 
-            Task.Run(() => StartPipeServer());
+            this.Load += (s, e) => Task.Run(() => StartPipeServerAsync());
 
             // this.FormBorderStyle = FormBorderStyle.None;
             this.TopMost = true;
@@ -36,7 +36,7 @@ namespace YeoruEXE
             positionCheckTimer.Start();
         }
 
-        private void StartPipeServer()
+        private async Task StartPipeServerAsync()
         {
             using (pipeServer = new NamedPipeServerStream("UnityPipe", PipeDirection.InOut))
             {
@@ -46,14 +46,27 @@ namespace YeoruEXE
                 {
                     while (pipeServer.IsConnected)
                     {
+                        var jsonMessage = await sr.ReadLineAsync();
+                        if (jsonMessage == null) break;
+
                         try
                         {
-                            string message = sr.ReadLine();
-                            if (message == null) break;
+                            PipeMessage ?receivedMessage = Newtonsoft.Json.JsonConvert.DeserializeObject<PipeMessage>(jsonMessage);
 
                             this.Invoke((MethodInvoker)delegate {
-                                // 메시지 처리 로직 (예: MessageBox.Show, Label.Text 변경 등)
-                                MessageBox.Show($"Unity에서 받은 메시지: {message}");
+                                MessageBox.Show($"Unity에서 받은 메시지: {jsonMessage}");
+
+                                switch (receivedMessage.command) 
+                                {
+                                    case "test_Hole":
+                                        MessageBox.Show($"Unity에서 받은 메시지: {jsonMessage}");
+                                        break;
+
+                                    default:
+                                        MessageBox.Show($"이건 뭐임? : {jsonMessage}");
+                                        break;
+                                }
+
                             });
                         }
                         catch (IOException)

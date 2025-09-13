@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("YeoruEXE")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+256457f6e55c2d679f73cb1d6098528323024530")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c5d46ba178e9530d9e9c213628bf9069f53a5c7b")]
 [assembly: System.Reflection.AssemblyProductAttribute("YeoruEXE")]
 [assembly: System.Reflection.AssemblyTitleAttribute("YeoruEXE")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
