@@ -9,9 +9,9 @@ public class OverlayTest : MonoBehaviour
     void Start()
     {
         // Debug.Log(Application.dataPath);
-        path = Application.dataPath + "/../YeoruEXE/bin/Debug/net8.0-windows/event_signal.txt";
+        // path = Application.dataPath + "/../YeoruEXE/bin/Debug/net8.0-windows/event_signal.txt";
 
-        StartCoroutine(CheckSignal());
+        // StartCoroutine(CheckSignal());
     }
 
     IEnumerator CheckSignal()
@@ -26,7 +26,6 @@ public class OverlayTest : MonoBehaviour
                 using (StreamReader reader = new StreamReader(fs))
                 {
                     string signal = reader.ReadToEnd();
-                    Debug.Log(signal);
 
                     if (signal == "trigger")
                     {

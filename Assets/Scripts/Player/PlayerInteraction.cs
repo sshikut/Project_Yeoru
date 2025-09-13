@@ -51,6 +51,7 @@ public class PlayerInteraction : MonoBehaviour
                         if (inventory.CheckItem(hit.collider.GetComponent<PipeInteraction>().value))
                         {
                             inventory.UseItem(hit.collider.GetComponent<PipeInteraction>().value);
+                            hit.collider.GetComponent<PipeInteraction>().OnInteract();
                         }
                         else
                         {

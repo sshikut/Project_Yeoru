@@ -47,7 +47,7 @@ public class NamedPipeServer : MonoBehaviour
             writer = new StreamWriter(pipeClient);
             reader = new StreamReader(pipeClient);
 
-            await SendMessageAsync("Hello from Unity!");
+            await SendMessageAsync("Command", "Unity가 접속함");
 
             _ = Task.Run(ReadPipeMessagesAsync);
         }
@@ -80,11 +80,20 @@ public class NamedPipeServer : MonoBehaviour
     }
 
     // 메시지를 보내는 별도 함수
-    public async Task SendMessageAsync(string message)
+    public async Task SendMessageAsync(string command, string value)
     {
         if (writer != null && pipeClient.IsConnected)
         {
-            await writer.WriteLineAsync(message);
+            PipeMessage messageObject = new PipeMessage
+            {
+                command = command,
+                value = value
+            };
+
+            string jsonMessage = JsonUtility.ToJson(messageObject);
+
+            Debug.Log($"[PipeClient] Sending JSON: {jsonMessage}");
+            await writer.WriteLineAsync(jsonMessage);
             await writer.FlushAsync();
         }
     }
