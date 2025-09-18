@@ -63,6 +63,16 @@ namespace YeoruEXE.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
         /// </summary>
+        internal static System.Drawing.Bitmap _1234 {
+            get {
+                object obj = ResourceManager.GetObject("1234", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
         internal static System.Drawing.Bitmap ConceptImage {
             get {
                 object obj = ResourceManager.GetObject("ConceptImage", resourceCulture);
@@ -76,6 +86,16 @@ namespace YeoruEXE.Properties {
         internal static System.Drawing.Bitmap ItemTestImage {
             get {
                 object obj = ResourceManager.GetObject("ItemTestImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap 형식의 지역화된 리소스를 찾습니다.
+        /// </summary>
+        internal static System.Drawing.Bitmap ttessst {
+            get {
+                object obj = ResourceManager.GetObject("ttessst", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -12,6 +12,9 @@ namespace YeoruEXE
 {
     public partial class OverlayForm : Form
     {
+        private const int WM_NCHITTEST = 0x84;
+        private const int HTCAPTION = 0x2;
+
         private CancellationTokenSource cts = new CancellationTokenSource();
         private Timer positionCheckTimer;
 
@@ -21,13 +24,16 @@ namespace YeoruEXE
 
             this.Load += (s, e) => Task.Run(() => StartPipeServerAsync(cts.Token));
 
-            // this.FormBorderStyle = FormBorderStyle.None;
+            this.Activated += new EventHandler(OverlayForm_Activated);
+            this.Deactivate += new EventHandler(OverlayForm_Deactivate);
+
+            this.FormBorderStyle = FormBorderStyle.None;
             this.TopMost = true;
             this.StartPosition = FormStartPosition.Manual;
             this.Location = new Point(300, 300);
             this.Size = new Size(800, 600);
-            this.BackColor = Color.Magenta;
-            this.TransparencyKey = Color.Magenta;
+            this.BackColor = Color.Black;
+            this.TransparencyKey = Color.Black;
             this.Opacity = 0.6;
             this.FormClosing += new FormClosingEventHandler(OverlayForm_FormClosing);
 
@@ -176,6 +182,45 @@ namespace YeoruEXE
         private void LoadImageFromResource()
         {
             pictureBox1.Image = Properties.Resources.ItemTestImage;
+        }
+
+        private void OverlayForm_Activated(object? sender, EventArgs e)
+        {
+            this.TopMost = true;
+            this.TransparencyKey = Color.Gray;
+            this.Opacity = 0.4;
+        }
+
+        private void OverlayForm_Deactivate(object? sender, EventArgs e)
+        {
+            this.TopMost = true;
+            this.TransparencyKey = Color.Black;
+            this.Opacity = 0.2;
+        }
+
+        protected override void WndProc(ref Message m)
+        {
+            // 마우스 관련 메시지(WM_NCHITTEST)인지 확인
+            if (m.Msg == WM_NCHITTEST)
+            {
+                // 메시지 결과를 HTCAPTION으로 설정하여
+                // 창의 클라이언트 영역(내용 부분)이 제목 표시줄처럼 동작하게 만듭니다.
+                m.Result = (IntPtr)HTCAPTION;
+                return; // 메시지 처리를 여기서 끝냅니다.
+            }
+
+            // 다른 메시지들은 기본 처리 방식에 맡깁니다.
+            base.WndProc(ref m);
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
