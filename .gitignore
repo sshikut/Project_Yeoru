@@ -76,3 +76,6 @@ crashlytics-build.properties
 
 # Exclusion YeoruEXE
 !/YeoruEXE/
+!/YeoruEXE/*.user
+!/YeoruEXE/*.csproj
+!/YeoruEXE/*.sln
