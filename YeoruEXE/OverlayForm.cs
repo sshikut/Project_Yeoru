@@ -18,6 +18,9 @@ namespace YeoruEXE
         private CancellationTokenSource cts = new CancellationTokenSource();
         private Timer positionCheckTimer;
 
+        private StreamReader? sr;
+        private StreamWriter? writer;
+
         public OverlayForm()
         {
             InitializeComponent();
@@ -41,6 +44,8 @@ namespace YeoruEXE
             positionCheckTimer.Interval = 100; // 100ms 마다 체크
             // positionCheckTimer.Tick += CheckPosition;
             positionCheckTimer.Start();
+
+            this.LocationChanged += new EventHandler(OnLocationChanged);
         }
 
         private async Task StartPipeServerAsync(CancellationToken token)
@@ -53,44 +58,49 @@ namespace YeoruEXE
                     {
                         await pipeServer.WaitForConnectionAsync(token);
 
-                        using (var sr = new StreamReader(pipeServer))
+                        sr = new StreamReader(pipeServer);
+                        writer = new StreamWriter(pipeServer);
+                        writer.AutoFlush = true;
+
+                        while (pipeServer.IsConnected && !token.IsCancellationRequested)
                         {
-                            while (pipeServer.IsConnected && !token.IsCancellationRequested)
+                            var jsonMessage = await sr.ReadLineAsync();
+                            if (string.IsNullOrWhiteSpace(jsonMessage)) break;
+
+                            try
                             {
-                                var jsonMessage = await sr.ReadLineAsync();
-                                if (string.IsNullOrWhiteSpace(jsonMessage)) break;
+                                PipeMessage? receivedMessage = JsonConvert.DeserializeObject<PipeMessage>(jsonMessage);
 
-                                try
+                                if (receivedMessage != null)
                                 {
-                                    PipeMessage? receivedMessage = JsonConvert.DeserializeObject<PipeMessage>(jsonMessage);
-
-                                    if (receivedMessage != null)
+                                    this.Invoke((MethodInvoker)delegate
                                     {
-                                        this.Invoke((MethodInvoker)delegate
+                                        switch (receivedMessage.command)
                                         {
-                                            switch (receivedMessage.command)
-                                            {
-                                                case "Command":
-                                                    MessageBox.Show($"Unity에서 받은 메시지: {jsonMessage}");
-                                                    break;
+                                            case "Command":
+                                                MessageBox.Show($"Unity에서 받은 메시지: {jsonMessage}");
+                                                break;
 
-                                                case "test_Hole":
-                                                    LoadImageFromResource();
-                                                    MessageBox.Show($"테스트: {jsonMessage}");
-                                                    break;
+                                            case "test_Hole":
+                                                LoadImageFromResource();
+                                                MessageBox.Show($"테스트: {jsonMessage}");
+                                                break;
 
-                                                default:
-                                                    MessageBox.Show($"이건 뭐임? : {jsonMessage}");
-                                                    break;
-                                            }
-                                        });
-                                    }
+                                            case "test_XYCorrect":
+                                                LoadImageFromResourceChangsub();
+                                                break;
 
+                                            default:
+                                                MessageBox.Show($"이건 뭐임? : {jsonMessage}");
+                                                break;
+                                        }
+                                    });
                                 }
-                                catch (JsonException ex)
-                                {
-                                    Console.WriteLine($"JSON Error: {ex.Message}");
-                                }
+
+                            }
+                            catch (JsonException ex)
+                            {
+                                Console.WriteLine($"JSON Error: {ex.Message}");
                             }
                         }
                     }
@@ -104,9 +114,52 @@ namespace YeoruEXE
                         // 예기치 않은 오류 발생 시 로그 기록 (서버는 계속 실행)
                         Console.WriteLine($"Pipe server error: {ex.Message}");
                     }
+                    finally
+                    {
+                        sr?.Dispose();
+                        writer?.Dispose();
+                        sr = null;
+                        writer = null;
+                    }
                 }
             }
 
+        }
+
+        public void SendMessageToUnity(string command, string value)
+        {
+            // writer가 null이면 (연결 전이거나 이미 끊긴 후) 아무것도 하지 않음
+            if (writer == null)
+            {
+                return;
+            }
+
+            try
+            {
+                // 1. PipeMessage 객체 생성 및 JSON 변환
+                var message = new PipeMessage
+                {
+                    command = command,
+                    value = value
+                };
+                string jsonMessage = JsonConvert.SerializeObject(message);
+
+                // 2. 메시지 전송 (AutoFlush=true이므로 Flush() 불필요)
+                writer.WriteLine(jsonMessage);
+            }
+            catch (ObjectDisposedException)
+            {
+                // 클라이언트 연결이 끊어진 상태에서 보내려고 할 때 발생 (무시)
+            }
+            catch (IOException)
+            {
+                // 메시지 전송 중 연결이 끊겼을 때 발생 (무시)
+            }
+            catch (Exception ex)
+            {
+                // 기타 예외
+                Console.WriteLine($"SendMessageToUnity Error: {ex.Message}");
+            }
         }
 
         [DllImport("user32.dll")]
@@ -124,27 +177,11 @@ namespace YeoruEXE
             public int Bottom;
         }
 
-        private void CheckPosition(object? sender, EventArgs e)
-        {
-            IntPtr hwnd = FindWindow(null, "Project_Yeoru - TestScene - Windows, Mac, Linux - Unity 2022.3.59f1 <DX11>"); // 에디터면 "Unity Editor"
-            if (hwnd == IntPtr.Zero)
-                return;
+        [DllImport("user32.dll")]
+        static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
-            if (GetWindowRect(hwnd, out RECT rect))
-            {
-                Rectangle unityWindow = new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
-                Rectangle overlayRect = new Rectangle(this.Location, this.Size);
-
-                if (unityWindow.IntersectsWith(overlayRect))
-                {
-                    File.WriteAllText("event_signal.txt", "trigger");
-                }
-                else
-                {
-                    File.WriteAllText("event_signal.txt", "none");
-                }
-            }
-        }
+        [DllImport("user32.dll")]
+        static extern bool ClientToScreen(IntPtr hWnd, ref Point lpPoint);
 
         private void OverlayForm_Load(object sender, EventArgs e)
         {
@@ -161,22 +198,6 @@ namespace YeoruEXE
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
-        }
-
-        private void LoadImageFromFileButton_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                pictureBox1.Image = Image.FromFile(@"C:\MyImages\picture.png");
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                MessageBox.Show("이미지 파일이 지정된 경로에 존재하지 않습니다.");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("이미지를 불러오는 중 오류가 발생했습니다: " + ex.Message);
-            }
         }
 
         private void LoadImageFromResource()
@@ -221,6 +242,64 @@ namespace YeoruEXE
         private void pictureBox3_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void OnLocationChanged(object sender, EventArgs e)
+        {
+            SendKeyPosition();
+        }
+
+        private void SendKeyPosition()
+        {
+            IntPtr hwnd = FindWindow(null, "Project_Yeoru - TestScene - Windows, Mac, Linux - Unity 2022.3.59f1 <DX11>");
+            if (hwnd == IntPtr.Zero)
+            {
+                // Unity 창을 못 찾았으면 전송 중지
+                return;
+            }
+
+            GetClientRect(hwnd, out RECT unityRect);
+            int unityClientHeight = unityRect.Bottom - unityRect.Top;
+
+            // 2. Unity 창의 '클라이언트 영역' (테두리 제외)의 시작점을 찾습니다.
+            Point unityClientOrigin = new Point(0, 0);
+            ClientToScreen(hwnd, ref unityClientOrigin);
+            // 'unityClientOrigin'은 이제 Unity 창의 렌더링 영역의 
+            // '절대 화면 좌표' (예: (800, 200))를 가집니다.
+
+            // 3. '열쇠 문양'(pictureBoxKey)의 '절대 화면 좌표'를 계산합니다.
+            Point keyImageScreenPos = this.PointToScreen(pictureBox2.Location);
+
+            // 4. (가장 중요) '절대 좌표'를 'Unity 창 기준 상대 좌표'로 변환합니다.
+            int relativeX = keyImageScreenPos.X - unityClientOrigin.X;
+            int relativeY_from_top = keyImageScreenPos.Y - unityClientOrigin.Y;
+            int relativeY_from_bottom = unityClientHeight - relativeY_from_top;
+
+            // 5. PipeMessage 객체 생성 및 JSON 변환
+            var message = new PipeMessage
+            {
+                command = "update_key_pos",
+                value = $"{relativeX},{relativeY_from_bottom}" // '상대 좌표'를 보냅니다.
+            };
+            string jsonMessage = JsonConvert.SerializeObject(message);
+
+            // 6. Unity 클라이언트로 메시지 전송
+            SendMessageToUnity(message.command, message.value);
+        }
+
+        private void pictureBox3_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox2_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LoadImageFromResourceChangsub()
+        {
+            pictureBox3.Image = Properties.Resources.image_removebg_preview;
         }
     }
 }
