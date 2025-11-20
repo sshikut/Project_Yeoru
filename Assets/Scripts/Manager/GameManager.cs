@@ -18,6 +18,15 @@ public class GameManager : MonoBehaviour
     private int pauseCounter = 0; // 여러 UI가 겹치는 경우 처리
 
     public bool isPause = false;
+    public bool isInputActive = true;
+
+    public bool CanPlayerMove
+    {
+        get
+        {
+            return isInputActive && !IsUIOpen();
+        }
+    }
 
     public GameUIState CurrentUIState { get; private set; } = GameUIState.None;
 

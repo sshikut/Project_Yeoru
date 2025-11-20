@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerInteraction : MonoBehaviour
 {
     public float interactDistance = 1f;
     public LayerMask interactLayer;
     public KeyCode interactKey = KeyCode.E;
-    public Inventory inventory;
 
     private Vector2 lookDirection = Vector2.down; // 기본 방향
 
@@ -35,9 +35,9 @@ public class PlayerInteraction : MonoBehaviour
 
                     if (hit.collider.CompareTag("Item"))
                     {
-                        if (inventory.CheckInventory())
+                        if (Inventory.Instance.CheckInventory())
                         {
-                            inventory.AddItem(hit.collider.GetComponent<ItemPickUp>().item);
+                            Inventory.Instance.AddItem(hit.collider.GetComponent<ItemPickUp>().item);
                             Destroy(hit.collider.gameObject);
                         }
                         else
@@ -48,15 +48,20 @@ public class PlayerInteraction : MonoBehaviour
 
                     if (hit.collider.CompareTag("Pipe"))
                     {
-                        if (inventory.CheckItem(hit.collider.GetComponent<PipeInteraction>().value))
+                        if (Inventory.Instance.CheckItem(hit.collider.GetComponent<PipeInteraction>().value))
                         {
-                            inventory.UseItem(hit.collider.GetComponent<PipeInteraction>().value);
+                            Inventory.Instance.UseItem(hit.collider.GetComponent<PipeInteraction>().value);
                             hit.collider.GetComponent<PipeInteraction>().OnInteract();
                         }
                         else
                         {
                             Debug.Log("이거에 맞는 아이템이 읍 다");
                         }
+                    }
+
+                    if (hit.collider.CompareTag("Door"))
+                    {
+                        hit.collider.GetComponent<ChangeScene>().ChangeSceneLoad();
                     }
                 }
                 

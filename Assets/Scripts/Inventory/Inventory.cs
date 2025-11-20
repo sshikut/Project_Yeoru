@@ -6,11 +6,27 @@ using static UnityEditor.Progress;
 
 public class Inventory : MonoBehaviour
 {
+    public static Inventory Instance;
+
     public InventorySlot[] inventorySlots = new InventorySlot[10];
+    public GameObject inventoryObject;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject); // 씬 전환에도 유지
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
-        inventorySlots = GetComponentsInChildren<InventorySlot>();
+        inventorySlots = inventoryObject.GetComponentsInChildren<InventorySlot>();
     }
 
     public bool AddItem(Item item, int amount = 1)

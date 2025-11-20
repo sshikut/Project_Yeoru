@@ -32,7 +32,7 @@ public class DialogueManager : MonoBehaviour
         currentLineIndex = 0;
         dialoguePanel.SetActive(true);
         dialogueActive = true;
-        CharacterMove.instance.canMove = false;
+        GameManager.Instance.isInputActive = false;
 
         StartCoroutine(TypeLine(dialogueLines[currentLineIndex]));
     }
@@ -80,7 +80,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         dialogueText.text = "";
         dialogueActive = false;
-        CharacterMove.instance.canMove = true;
+        GameManager.Instance.isInputActive = true;
         GameManager.Instance.CloseUI();
     }
 }

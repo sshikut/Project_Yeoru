@@ -5,7 +5,6 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public GameObject inventoryUI;
-    public Inventory inventory;
 
     void Update()
     {

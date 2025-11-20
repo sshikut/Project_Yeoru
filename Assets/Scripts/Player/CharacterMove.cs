@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class CharacterMove : MonoBehaviour
 {
-
-    public static CharacterMove instance;
-
     public float speed;
     public int walkCount;
     private int currentWalkCount;
@@ -20,26 +17,33 @@ public class CharacterMove : MonoBehaviour
     public float runSpeed;
     private float applyRunSpeed;
     private bool applyRunFlag = false;
-    public bool canMove = true;
+    private bool isMoving = false;
 
-    private void Awake()
+    void Update()
     {
-        if (instance == null)
+        // if (!canMove) return;
+
+        if (!GameManager.Instance.CanPlayerMove) return;
+
+        if (!isMoving)
         {
-            DontDestroyOnLoad(this.gameObject);
-            instance = this;
-        }
-        else
-        {
-            Destroy(this.gameObject);
+            if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
+            {
+                isMoving = true;
+                StartCoroutine(MoveCoroutine());
+            }
         }
     }
-
 
     IEnumerator MoveCoroutine()
     {
         while (Input.GetAxisRaw("Vertical") != 0 || Input.GetAxisRaw("Horizontal") != 0)
         {
+            if (!GameManager.Instance.CanPlayerMove)
+            {
+                break;
+            }
+
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 applyRunSpeed = runSpeed;
@@ -84,27 +88,8 @@ public class CharacterMove : MonoBehaviour
 
         }
         animator.SetBool("Walking", false);
-        canMove = true;
+        isMoving = false;
 
-    }
-
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        // if (!canMove) return;
-
-        if (GameManager.Instance.IsUIOpen()) return;
-
-        if (canMove)
-        {
-            if (Input.GetAxisRaw("Horizontal") != 0 || Input.GetAxisRaw("Vertical") != 0)
-            {
-                canMove = false;
-                StartCoroutine(MoveCoroutine());
-            }
-        }
     }
 
     public void SnapToPixelGrid()
