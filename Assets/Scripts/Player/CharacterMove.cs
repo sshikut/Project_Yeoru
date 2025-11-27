@@ -10,14 +10,14 @@ public class CharacterMove : MonoBehaviour
 
     private Vector3 vector;
 
-    private BoxCollider2D boxCollider;
-    private LayerMask layerMask;
     public Animator animator;
 
     public float runSpeed;
     private float applyRunSpeed;
     private bool applyRunFlag = false;
     private bool isMoving = false;
+
+    public LayerMask wallLayer;
 
     void Update()
     {
@@ -64,24 +64,31 @@ public class CharacterMove : MonoBehaviour
 
             animator.SetFloat("DirX", vector.x);
             animator.SetFloat("DirY", vector.y);
-            animator.SetBool("Walking", true);
 
-            while (currentWalkCount < walkCount)
+            if (CheckCollision())
             {
-                // UI가 열렸어도 한 칸은 마저 진행
-                transform.Translate(vector.x * (speed + applyRunSpeed) * 0.01f,
-                                    vector.y * (speed + applyRunSpeed) * 0.01f, 0);
-
-                SnapToPixelGrid();
-
-                if (applyRunFlag)
-                    currentWalkCount++;
-                currentWalkCount++;
-
-                yield return new WaitForSeconds(0.01f);
+                animator.SetBool("Walking", false); // 벽에 비비는 애니메이션이 싫다면 false
+                yield return null;
             }
+            else
+            {
+                animator.SetBool("Walking", true);
 
-            currentWalkCount = 0;
+                while (currentWalkCount < walkCount)
+                {
+                    // UI가 열렸어도 이미 시작한 한 칸 이동은 마저 진행
+                    transform.Translate(vector.x * (speed + applyRunSpeed) * 0.01f,
+                                        vector.y * (speed + applyRunSpeed) * 0.01f, 0);
+
+                    SnapToPixelGrid();
+
+                    if (applyRunFlag) currentWalkCount++;
+                    currentWalkCount++;
+
+                    yield return new WaitForSeconds(0.01f);
+                }
+                currentWalkCount = 0;
+            }
 
             if (GameManager.Instance.IsUIOpen())
                 break;
@@ -99,5 +106,14 @@ public class CharacterMove : MonoBehaviour
         pos.x = Mathf.Round(pos.x * ppu) / ppu;
         pos.y = Mathf.Round(pos.y * ppu) / ppu;
         transform.position = pos;
+    }
+
+    bool CheckCollision()
+    {
+        // 내 위치에서 -> 입력된 방향(vector)으로 -> 1칸(1f)만큼 쏴서 -> wallLayer에 닿는지 확인
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, vector, 1f, wallLayer);
+
+        // 닿은게 있으면(null이 아니면) true 반환
+        return hit.collider != null;
     }
 }
